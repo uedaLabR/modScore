@@ -79,6 +79,8 @@ import copy
 import numpy as np
 def run_recalib(inbam, outbam, filter_bed):
 
+    print("start bem recalib")
+
     all_dict = load_filter_bed(filter_bed)
     with pysam.AlignmentFile(inbam, "rb") as bam_in, pysam.AlignmentFile(outbam, "wb", template=bam_in) as bam_out:
 

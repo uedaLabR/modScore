@@ -107,8 +107,8 @@ def train(data,weightpath,epoch,outhistory):
 # data.append(("GCCTGCCCCCGCTAACCGGCTTTTTGCCCAAATGGGCCATT",1))
 # data.append(("TTCATCGGCGTAAATCTAACTTTCTTCCCACAACACTTTCT",1))
 
-import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+# import os
+# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 import random
 
 
@@ -469,8 +469,9 @@ def getRef(sourcepath, genome):
             return file
     return ""
 
-def trainNN(sourcepath, genome, fp_ivtpath, outhistory, weightpath,eachsize=50000, epoch=100):
+def trainNN(sourcepath, genome, fp_ivtpath, outhistory, weightpath,epoch=100):
 
+    print("start training")
     ref = getRef(sourcepath, genome)
     refhg38 = getRef(sourcepath, "hg38")
     m6Apath, m5Cpath, psudepath, editingpath = getFiles2(sourcepath,genome)

@@ -121,6 +121,8 @@ def getFiles(source_path,genome):
 from filter.NNFilter import *
 def filterBed(bed, bed_out, source_path, genome):
 
+    print("start filterbe")
+
     print("loading known pos")
     knownPos = loadKnownPos(source_path, genome)
     print("loading known pos2")
