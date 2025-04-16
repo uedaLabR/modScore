@@ -199,21 +199,14 @@ def reverse_complement(seq):
 
 import pandas as pd
 import pysam
-def getData(data,m6Apath,m5Cpath, psudepath,editingpath, fp_ivtpath,fasta_path,eachsize):
+def getData(data,m6Apath,m5Cpath, psudepath,editingpath, fp_ivtpath,fasta_path,fasta_path_hg38):
 
     maxcnt = 40000
 
     scorethres = 15
     ratiothres = 10
     sequences = []
-    if "mm10" in fasta_path:
-        hg38_path = "/share/ueda/nanoModiTune/resource/genome/hg38.fa"
-        #currently false positive is taken for hg38
-        fasta = pysam.FastaFile(hg38_path)
-
-    else:
-
-        fasta = pysam.FastaFile(fasta_path)
+    fasta = pysam.FastaFile(fasta_path_hg38)
 
     with open(fp_ivtpath, "r") as bed_file:
         for line in bed_file:
@@ -479,6 +472,7 @@ def getRef(sourcepath, genome):
 def trainNN(sourcepath, genome, fp_ivtpath, outhistory, eachsize=50000, epoch=100):
 
     ref = getRef(sourcepath, genome)
+    refhg38 = getRef(sourcepath, "hg38")
     m6Apath, m5Cpath, psudepath, editingpath = getFiles2(sourcepath,genome)
     print((m6Apath, m5Cpath, psudepath, editingpath))
     data = []
@@ -494,7 +488,7 @@ def trainNN(sourcepath, genome, fp_ivtpath, outhistory, eachsize=50000, epoch=10
     m6Apath, m5Cpath, psudepath, editingpath = getFiles(sourcepath,genome)
     print(m6Apath, m5Cpath, psudepath, editingpath)
     print("----")
-    data = getData(data,m6Apath,m5Cpath,psudepath,editingpath,fp_ivtpath,ref,eachsize)
+    data = getData(data,m6Apath,m5Cpath,psudepath,editingpath,fp_ivtpath,ref,refhg38)
     print("finish get data")
 
     print("random sampling")

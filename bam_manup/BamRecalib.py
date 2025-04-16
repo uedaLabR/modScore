@@ -47,7 +47,7 @@ def load_filter_bed(filter_bed):
             columns = line.strip().split("\t")
             chrom, pos, alt, passfail = columns[0], int(columns[1]), str(columns[3]), columns[-1]
             if passfail == "Pass":
-                alt_dict.setdefault(alt, {}).setdefault(chrom, []).append(pos)
+                alt_dict.setdefault(alt, {}).setdefault(chrom, set()).add(pos)
     return alt_dict
 
 # Check if position is filtered
@@ -97,7 +97,7 @@ def run_recalib(inbam, outbam, filter_bed):
                 refposs = read.get_reference_positions()
                 modbase = read.modified_bases
                 ML = read.get_tag("ML")
-                orginal_array = copy.deepcopy(ML)
+                orginal_array = copy.copy(ML)
 
                 if modbase is not None:
                     modkeys = list(modbase.keys())
@@ -106,6 +106,7 @@ def run_recalib(inbam, outbam, filter_bed):
                     mlindex = 0
                     for modkey in modkeys:
 
+                        filter_set = all_dict.get(str(modkey[2]), {}).get(chrom, None)
                         modlist = modbase[modkey]
                         processed_tuples = [(convertToGenomepos(x, refposs), x, y) for x, y in modlist]
                         for tp in processed_tuples:
@@ -117,7 +118,9 @@ def run_recalib(inbam, outbam, filter_bed):
                             #
                             counter = cntdict.get(str(modkey[2]), (0,0))
                             clear,kept = counter
-                            if matchedPoss(chrom, pos, str(modkey[2]),all_dict):
+
+                            if filter_set is not None and (
+                                    (pos - 1 in filter_set) or (pos in filter_set) or (pos + 1 in filter_set)):
                                 kept += 1
                             else:
                                 ML[mlindex] = 0
@@ -131,8 +134,9 @@ def run_recalib(inbam, outbam, filter_bed):
                 read.set_tag("XM", orginal_array)
 
             readcnt += 1
-            if readcnt % 1000 == 0:
+            if readcnt % 50000 == 0:
                 print(readcnt,cntdict)
+                # break
 
             # Write the modified read to the output BAM file
             bam_out.write(read)
