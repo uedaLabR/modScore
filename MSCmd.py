@@ -1,4 +1,11 @@
+import click
+import os
+@click.group()
+def cmd():
+    pass
+
 def removeExt(path):
+
     return os.path.splitext(path)[0]
 
 from filter import FilterBed
