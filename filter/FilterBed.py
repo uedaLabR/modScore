@@ -103,6 +103,8 @@ def getFiles(source_path,genome):
     for s in dirs:
 
         p = source_path+"/"+s+ "/*"
+        if s == "genome":
+            p = source_path + "/" + s + "/*.fa"
         files = glob.glob(p)
         for file in files:
 

@@ -462,7 +462,7 @@ def evaluate_validation_set(model,X_test, y_test, output_csv_path):
 import glob
 def getRef(sourcepath, genome):
 
-    p = sourcepath+"/genome/*"
+    p = sourcepath+"/genome/*.fa"
     files = glob.glob(p)
     for file in files:
         if genome in file:
