@@ -7,7 +7,7 @@ from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.utils import to_categorical
 import pandas as pd
-from NNModel import *
+from nnmodel.NNModel import *
 from MSUtils import *
 import tensorflow as tf
 
