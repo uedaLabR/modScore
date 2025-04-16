@@ -469,7 +469,7 @@ def getRef(sourcepath, genome):
             return file
     return ""
 
-def trainNN(sourcepath, genome, fp_ivtpath, outhistory, eachsize=50000, epoch=100):
+def trainNN(sourcepath, genome, fp_ivtpath, outhistory, weightpath,eachsize=50000, epoch=100):
 
     ref = getRef(sourcepath, genome)
     refhg38 = getRef(sourcepath, "hg38")
@@ -516,7 +516,7 @@ def trainNN(sourcepath, genome, fp_ivtpath, outhistory, eachsize=50000, epoch=10
         label = flg_labels.get(flg, "Unknown")
         print(f"{label} (Flag {flg}): {count} sequences")
 
-    weightpath = sourcepath+"/model_weight/"+genome+".weights.h5"
+    # weightpath = sourcepath+"/model_weight/"+genome+".weights.h5"
     train(data,weightpath,epoch,outhistory)
 
 

@@ -23,12 +23,12 @@ def reflectToBam(bamin,bamout,filter_bed):
 
 
 
-from nnmodel import TrainModel
-@click.option('-fp_ivtpath', '--fp_ivtpath')
-@click.option('-outhistory', '--outhistory')
+from nnmodel import AttentionClassfication
 @click.option('-source_path', '--source_path')
 @click.option('-genome', '--genome')
-def trainSequenceClassification(fp_ivtpath,outhistory,source_path, genome):
+@click.option('-fp_ivtpath', '--fp_ivtpath')
+@click.option('-outhistory', '--outhistory')
+@click.option('-weightpath', '--weightpath')
+def trainSequenceClassification(source_path, genome, fp_ivtpath,outhistory, weightpath):
 
-
-    TrainModel.trainNN(source_path, genome, fp_ivtpath, outhistory, eachsize=20000, epoch=100)
+    AttentionClassfication.trainNN(source_path, genome, fp_ivtpath, outhistory, weightpath, eachsize=20000, epoch=100)
