@@ -42,3 +42,5 @@ from nnmodel import AttentionClassfication
 def trainSequenceClassification(source_path, genome, fp_ivtpath,outhistory, weightpath):
 
     AttentionClassfication.trainNN(source_path, genome, fp_ivtpath, outhistory, weightpath, epoch=100)
+
+if __name__ == '__main__': cmd()
