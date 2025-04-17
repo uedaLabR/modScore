@@ -11,6 +11,10 @@ from nnmodel.NNModel import *
 from MSUtils import *
 import tensorflow as tf
 
+def removeExt(path):
+
+    return os.path.splitext(path)[0]
+
 def train(data,weightpath,epoch,outhistory):
 
     # structlist = calc2ndaryStruct(data,calcstruct=False)
@@ -100,7 +104,7 @@ def train(data,weightpath,epoch,outhistory):
     history_df = pd.DataFrame(history.history)
     history_df.to_csv(outhistory, index=False)
 
-    output_csv_path = outhistory+"matrix.csv"
+    output_csv_path = removeExt(outhistory)+"_matrix.csv"
     evaluate_validation_set(model,X_test, y_test, output_csv_path)
 
 # data = []

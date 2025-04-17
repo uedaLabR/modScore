@@ -9,6 +9,7 @@ def removeExt(path):
     return os.path.splitext(path)[0]
 
 from filter import FilterBed
+from stats import StatsResult
 
 @cmd.command()
 @click.option('-bed', '--bed')
@@ -29,7 +30,6 @@ from bam_manup import BamRecalib
 def reflectToBam(bamin,bamout,filter_bed):
 
     BamRecalib.reflectToBam(bamin,bamout,filter_bed)
-
 
 
 from nnmodel import AttentionClassfication
