@@ -100,7 +100,7 @@ def train(data,weightpath,epoch,outhistory):
     history_df = pd.DataFrame(history.history)
     history_df.to_csv(outhistory, index=False)
 
-    output_csv_path = "/share/ueda/nanoModiTune/classval.csv"
+    output_csv_path = outhistory+"matrix.csv"
     evaluate_validation_set(model,X_test, y_test, output_csv_path)
 
 # data = []
