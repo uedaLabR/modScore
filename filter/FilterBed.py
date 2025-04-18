@@ -1,7 +1,7 @@
 from filter.FilterMod import *
 from filter.LoadPos import *
 
-def filterEachMod(datalist_filter,knownPos,knownDB,repeat,genome):
+def filterEachMod(datalist_filter,knownPos,source_path,repeat,genome):
 
     alt_dict = {}
     for columns,sequence,pre in datalist_filter:
@@ -29,7 +29,7 @@ def filterEachMod(datalist_filter,knownPos,knownDB,repeat,genome):
             result = filter_m6A(chrom_group,  knownPos)
         elif alt == "17596":
             # Process alt "17596" using filter_Inosine.
-            result = filter_Inosine(chrom_group, repeat,genome,knownPos,knownDB)
+            result = filter_Inosine(chrom_group, repeat,genome,knownPos,source_path)
         else:
             # Process any other alt using filter_PsudeUridine.
             result = filter_PsudeUridine(chrom_group, knownPos)
@@ -139,7 +139,7 @@ def filterBed(bed, bed_out, source_path, genome):
 
 
     print("filter each modification")
-    filterList = filterEachMod(datalist_filter,knownPos,knownDB,repeat,genome)
+    filterList = filterEachMod(datalist_filter,knownPos,source_path,repeat,genome)
     output(bed_out, filterList)
 
 def output(bed_out, filterList):

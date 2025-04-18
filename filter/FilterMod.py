@@ -199,7 +199,7 @@ import pandas as pd
 def loadKnown(genome,knownPosDir):
 
     known_dict = {}
-    files = glob.glob(knownPosDir+"/*")
+    files = glob.glob(knownPosDir+"/db1/*")
     # print(files)
     tgfile =""
     for file in files:
@@ -219,7 +219,7 @@ def loadKnown(genome,knownPosDir):
 
     files2 = glob.glob(knownPosDir + "/db2/*")
     tgfile = None
-    for file in files:
+    for file in files2:
         if genome in file and "editing" in file:
               tgfile = file
     if tgfile:
@@ -262,10 +262,10 @@ def getFlg_Inosine(inknownPos,inrepeat,nearKnownSites,flgOk):
     return flg
 
 
-def filter_Inosine(chrom_group, repeat,genome,knownPos,knownDB):
+def filter_Inosine(chrom_group, repeat,genome,knownPos,source_path):
 
     repeat_dict = load_repeat_from_rmsk_bisect(repeat,genome)
-    known_dict =  loadKnown(genome,knownDB)
+    known_dict =  loadKnown(genome,source_path)
     retlist = []
     for chrom in chrom_group:
 
