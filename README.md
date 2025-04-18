@@ -1,30 +1,36 @@
+
 # modScore
 
-**modScore** is a Python-based standalone tool designed to filter RNA modification calls detected by Oxford Nanopore Technologies (ONT) Dorado and modkit.  
-It integrates deep learning and known modification sites to reduce false positives.
+**modScore** is a Python-based tool for filtering RNA modification calls from Oxford Nanopore Technologies (ONT) Dorado and modkit.  
+It combines **deep learning** and **known modification sites** to reduce false positives.
 
-Currently supported RNA modifications:
+### 🧬 Supported RNA modifications
 
 - **m⁶A**
 - **m⁵C**
 - **Ψ (Pseudouridine)**
 - **Inosine**
 
-Currently supported genome :
-- **hg38**
-- **mm10**
+### 🧬 Supported genome
+
+- hg38
+- mm10
 ---
 
-## 🔧 Installation
+## 🚀 Quick Start
 
-### 1. Standalone (local Python environment)
+### Option 1: Run with Python (Standalone)
 
-Make sure you are using **Python 3.10** or later, and install the required packages with:
+Clone the repository:
 
-```bash
-
+```
 git clone https://github.com/uedaLabR/modScore.git
+cd modScore
+```
 
+Install dependencies (Python 3.10 or later recommended):
+
+```
 pip install --no-cache-dir \
     numpy==1.24.4 \
     tensorflow==2.15 \
@@ -33,22 +39,100 @@ pip install --no-cache-dir \
     pysam==0.22.0 \
     click==8.0.4 \
     scikit-learn==1.5.2
+```
 
-## 🚀 Command-line Usage
-All commands are available through the MSCmd.py entry point using the Click CLI framework.
+Run the program:
 
-python MSCmd.py <command> [OPTIONS]
+```
+python main.py <command> [OPTIONS]
+```
 
-## 🔍 1. Filter RNA modification BED file
-python main.py filter \
-    -bed <input_bed> \
-    -bed_out <filtered_output_bed> \
-    -source_path <known_site_database_dir> \
-    -genome <genome_version>
+---
 
-input_bed: BED file from Dorado/modkit
-filtered_output_bed: Output BED file after filtering
-source_path: Directory containing known modification site BED files
-genome_version: Reference genome version (e.g., "hg38", default: "hg38")
+### Option 2: Run with Docker
 
-This command also generates a corresponding *_stats.txt file summarizing the filter results.
+Pull the prebuilt image:
+
+```
+docker pull karkinos/modscore_v01:latest
+```
+
+
+---
+
+## 🛠 Available Commands
+
+### 1. `filter` – Filter modification BED and generate statistics
+
+```
+python MSCmd.py filter \
+  --bed input.bed \
+  --bed_out filtered_output.bed \
+  --source_path path/to/known_sites \
+  --genome hg38
+```
+
+**Arguments:**
+
+- `--bed`: Input BED file (from Dorado/modkit)
+- `--bed_out`: Output filtered BED file
+- `--source_path`: Directory containing known modification site BEDs
+- `--genome`: Genome version (default: `hg38`)
+
+➡️ Outputs both a filtered BED and a `*_stats.txt` summary.
+
+---
+
+### 2. `reflectToBam` – Update ML tags in BAM using filtered BED
+
+```
+python main.py reflectToBam \
+  --bamin input.bam \
+  --bamout output.bam \
+  --filter_bed filtered_output.bed
+```
+
+**Arguments:**
+
+- `--bamin`: Original BAM file
+- `--bamout`: Output BAM with updated ML tags
+- `--filter_bed`: BED file from the `filter` command
+
+---
+
+### 3. `trainSequenceClassification` – Train deep learning model
+
+```
+python main.py trainSequenceClassification \
+  --source_path training_data_dir \
+  --genome hg38 \
+  --fp_ivtpath ivt_data_dir \
+  --outhistory train_log.txt \
+  --weightpath model_weights.h5
+```
+
+**Arguments:**
+
+- `--source_path`: Directory of training data
+- `--fp_ivtpath`: Directory of positive (IVT) data
+- `--outhistory`: Training history log output
+- `--weightpath`: Output path for model weights
+
+---
+
+
+## 🧪 Tested Environment
+
+- Python 3.10
+- Ubuntu 22.04
+- TensorFlow 2.15 (GPU-enabled)
+- ONT Dorado 0.9.1 + modkit 0.4.5
+
+---
+
+## 📦 Docker Image
+
+- Docker Hub: [karkinos/modscore_v01](https://hub.docker.com/r/karkinos/modscore_v01)
+
+
+
