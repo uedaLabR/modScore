@@ -1,8 +1,14 @@
+from numba import njit
+from numba import njit, int64
+
+
 def toInt(s):
     try:
         return int(s)
     except ValueError:
         return s
+
+
 
 def sortbyMMTagKeyInfo(modkeys,mm_tag):
 
@@ -39,15 +45,37 @@ def convertToGenomepos(x,refposs):
         conv = conv+1
     return conv
 
+@njit
+def convert_to_genomepos_nb(x, refposs):
+    """
+    refposs: int64[:], None  -1 \
+    return: 1-based u or 0
+    """
+    if x < 0 or x >= refposs.shape[0]:
+        return 0
+    rp = refposs[x]
+    if rp >= 0:
+        return rp + 1
+    else:
+        return 0
+
+
 # Load BED file to create a filter dictionary
 def load_filter_bed(filter_bed):
     alt_dict = {}
-    with open(filter_bed, "r") as bed:
-        for line in bed:
-            columns = line.strip().split("\t")
-            chrom, pos, alt, passfail = columns[0], int(columns[1]), str(columns[3]), columns[-1]
+    with open(filter_bed) as f:
+        for line in f:
+            cols = line.rstrip("\n").split("\t")
+            chrom = cols[0]
+            pos = int(cols[1])
+            alt = cols[3]
+            passfail = cols[-1]
             if passfail == "Pass":
-                alt_dict.setdefault(alt, {}).setdefault(chrom, set()).add(pos)
+                # K typed.Set
+                alt_dict.setdefault(alt, {}) \
+                        .setdefault(chrom, set()) \
+                        .add(pos)
+    # A alt/chrom  Set
     return alt_dict
 
 # Check if position is filtered
@@ -73,13 +101,37 @@ def matchedPoss(chrom, pos, modkey,all_dict):
 
     return False
 
+@njit
+def updateML(ML, mlindex, positions, filter_set):
+
+    clear = 0
+    kept  = 0
+    n_ml  = ML.shape[0]
+    for i in range(positions.shape[0]):
+        if mlindex >= n_ml:
+            break
+        p = positions[i]
+        # }1
+        if (p   in filter_set) or \
+           (p-1 in filter_set) or \
+           (p+1 in filter_set):
+            kept += 1
+        else:
+            ML[mlindex] = 0
+            clear += 1
+        mlindex += 1
+    return mlindex, clear, kept
+
+
+
 
 import pysam
 import copy
 import numpy as np
 def run_recalib(inbam, outbam, filter_bed):
 
-    print("start bem recalib")
+    print("start bam recalib")
+    empty = set()
 
     all_dict = load_filter_bed(filter_bed)
     with pysam.AlignmentFile(inbam, "rb") as bam_in, pysam.AlignmentFile(outbam, "wb", template=bam_in) as bam_out:
@@ -96,44 +148,36 @@ def run_recalib(inbam, outbam, filter_bed):
 
             if read.has_tag("MM") and read.has_tag("ML"):
 
-                refposs = read.get_reference_positions()
+                refposs_np = np.array([p if p is not None else -1 for p in read.get_reference_positions()],
+                                      dtype=np.int64)
+
+
                 modbase = read.modified_bases
                 ML = read.get_tag("ML")
-                orginal_array = copy.copy(ML)
+                ML_arr = np.array(ML, dtype=np.int32)
 
                 if modbase is not None:
+
                     modkeys = list(modbase.keys())
                     mm_tag = read.get_tag("MM")
                     modkeys = sortbyMMTagKeyInfo(modkeys, mm_tag)
                     mlindex = 0
+
                     for modkey in modkeys:
 
-                        filter_set = all_dict.get(str(modkey[2]), {}).get(chrom, None)
+                        key_str = str(modkey[2])
+                        clear, kept = cntdict.get(key_str, (0, 0))
+                        filter_set = all_dict.get(key_str, {}).get(chrom, empty)
+
                         modlist = modbase[modkey]
-                        processed_tuples = [(convertToGenomepos(x, refposs), x, y) for x, y in modlist]
-                        for tp in processed_tuples:
+                        positions = np.array([convert_to_genomepos_nb(x, refposs_np) for x, y in modlist],
+                                             dtype=np.int64)
+                        mlindex,_clear,_kept = updateML(ML_arr,mlindex,positions,filter_set)
+                        cntdict[key_str] = (clear+_clear, kept+_kept)
 
-                            if mlindex >= len(ML):
-                                break
-
-                            pos, localpos, originalscore = tp
-                            #
-                            counter = cntdict.get(str(modkey[2]), (0,0))
-                            clear,kept = counter
-
-                            if filter_set is not None and (
-                                    (pos - 1 in filter_set) or (pos in filter_set) or (pos + 1 in filter_set)):
-                                kept += 1
-                            else:
-                                ML[mlindex] = 0
-                                clear += 1
-                            #
-                            cntdict[str(modkey[2])] = (clear,kept)
-
-                            mlindex += 1
-
+                ML = ML_arr.tolist()
                 read.set_tag("ML", ML)
-                read.set_tag("XM", orginal_array)
+
 
             readcnt += 1
             if readcnt % 50000 == 0:
