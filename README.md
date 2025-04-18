@@ -44,7 +44,7 @@ pip install --no-cache-dir \
 Run the program:
 
 ```
-python main.py <command> [OPTIONS]
+python MSCmd.py <command> [OPTIONS]
 ```
 
 ---
@@ -86,7 +86,7 @@ python MSCmd.py filter \
 ### 2. `reflectToBam` – Update ML tags in BAM using filtered BED
 
 ```
-python main.py reflectToBam \
+python MSCmd.py reflectToBam \
   --bamin input.bam \
   --bamout output.bam \
   --filter_bed filtered_output.bed
@@ -103,7 +103,7 @@ python main.py reflectToBam \
 ### 3. `trainSequenceClassification` – Train deep learning model
 
 ```
-python main.py trainSequenceClassification \
+python MSCmd.py trainSequenceClassification \
   --source_path training_data_dir \
   --genome hg38 \
   --fp_ivtpath ivt_data_dir \
