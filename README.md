@@ -30,9 +30,10 @@ cd modScore
 
 Download source files:
 
+```
 wget https://zenodo.org/api/records/15239594/draft/files/source.zip/content .
 unzip source.zip
-
+```
 
 Install dependencies (Python 3.10 or later recommended):
 
