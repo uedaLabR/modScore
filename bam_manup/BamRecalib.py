@@ -101,7 +101,7 @@ def matchedPoss(chrom, pos, modkey,all_dict):
 
     return False
 
-@njit
+# @njit
 def updateML(ML, mlindex, positions, filter_set):
 
     clear = 0
@@ -111,7 +111,6 @@ def updateML(ML, mlindex, positions, filter_set):
         if mlindex >= n_ml:
             break
         p = positions[i]
-        # }1
         if (p   in filter_set) or \
            (p-1 in filter_set) or \
            (p+1 in filter_set):
