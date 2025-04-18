@@ -10,6 +10,9 @@ Currently supported RNA modifications:
 - **Ψ (Pseudouridine)**
 - **Inosine**
 
+Currently supported genome :
+- **hg38**
+- **mm10**
 ---
 
 ## 🔧 Installation
