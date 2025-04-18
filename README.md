@@ -100,7 +100,7 @@ python MSCmd.py reflectToBam \
 
 ---
 
-### 3. `trainSequenceClassification` – Train deep learning model
+### 3. `trainSequenceClassification` – Train deep learning model (Optional)
 
 ```
 python MSCmd.py trainSequenceClassification \
