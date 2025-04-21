@@ -29,7 +29,7 @@ from bam_manup import BamRecalib
 @click.option('-filter_bed', '--filter_bed')
 def reflectToBam(bamin,bamout,filter_bed):
 
-    BamRecalib.reflectToBam(bamin,bamout,filter_bed)
+    BamRecalib.run_recalib(bamin,bamout,filter_bed)
 
 
 from nnmodel import AttentionClassfication
