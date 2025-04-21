@@ -36,10 +36,10 @@ def stats_result(bed_file, output_file):
                     out.write(f"{alt}\t{status}\t{count}\t-\t0\n")
 
 
-bed = "/share/ueda/nanoModiTune/Hek293pu_filter.bed"
-output = "/share/ueda/nanoModiTune/Hek293pu_stats.txt"
-
-# bed = "/share/ueda/nanoModiTune/Hek293_recalib_pu_filter.bed"
-# output = "/share/ueda/nanoModiTune/Hek293pu_stats_recalib.txt"
-
-stats_result(bed, output)
+# bed = "/share/ueda/nanoModiTune/Hek293pu_filter.bed"
+# output = "/share/ueda/nanoModiTune/Hek293pu_stats.txt"
+#
+# # bed = "/share/ueda/nanoModiTune/Hek293_recalib_pu_filter.bed"
+# # output = "/share/ueda/nanoModiTune/Hek293pu_stats_recalib.txt"
+#
+# stats_result(bed, output)

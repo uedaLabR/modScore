@@ -48,6 +48,9 @@ def getFlg(path):
 
 def addData2(knownPos, path, flg,adjust=0):
 
+    if not path or len(path) < 2:
+        return
+
     with open(path, 'r') as f:
 
         for line in f:
@@ -106,10 +109,10 @@ def addOtherDB(knownPos, sourcepath,genome):
     if m6Apath:
         addData2(knownPos, m6Apath, Flg_m6A)
     if m5Cpath:
-        addData2(knownPos, m6Apath, Flg_m5C)
+        addData2(knownPos, m5Cpath, Flg_m5C)
     if psudepath:
-        addData2(knownPos, m6Apath, Flg_Y)
+        addData2(knownPos, psudepath, Flg_Y)
     if editingpath:
-        addData2(knownPos, m6Apath, Flg_I)
+        addData2(knownPos, editingpath, Flg_I)
 
     return knownPos

@@ -208,7 +208,7 @@ def loadKnown(genome,knownPosDir):
     if len(tgfile)==0:
         print("No def file for RNA Editing")
     else:
-        bed_df = pd.read_csv(tgfile, header=None, sep='\t')
+        bed_df = pd.read_csv(tgfile, header=None, sep='\t',comment='#')
         for index, row in bed_df.iterrows():
 
             chrom = row[0]
@@ -223,7 +223,7 @@ def loadKnown(genome,knownPosDir):
         if genome in file and "editing" in file:
               tgfile = file
     if tgfile:
-        bed_df = pd.read_csv(tgfile, header=None, sep='\t')
+        bed_df = pd.read_csv(tgfile, header=None, sep='\t',comment='#')
         for index, row in bed_df.iterrows():
 
             chrom = row[0]
