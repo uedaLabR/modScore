@@ -97,6 +97,7 @@ python MSCmd.py reflectToBam \
   --bamin input.bam \
   --bamout output.bam \
   --filter_bed filtered_output.bed
+  --genome_ref genome hg38.fa
 ```
 
 **Arguments:**
@@ -104,7 +105,7 @@ python MSCmd.py reflectToBam \
 - `--bamin`: Original BAM file
 - `--bamout`: Output BAM with updated ML tags
 - `--filter_bed`: BED file from the `filter` command
-
+- `--genome_ref`: path to reference genome fasta file (fai file required)
 ---
 
 ### 3. `trainSequenceClassification` – Train deep learning model (Optional)
