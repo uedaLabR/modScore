@@ -27,9 +27,10 @@ from bam_manup import BamRecalib
 @click.option('-bamin', '--bamin')
 @click.option('-bamout', '--bamout')
 @click.option('-filter_bed', '--filter_bed')
-def reflectToBam(bamin,bamout,filter_bed):
+@click.option('-genome_ref', '--genome_ref')
+def reflectToBam(bamin,bamout,filter_bed,genome_ref):
 
-    BamRecalib.run_recalib(bamin,bamout,filter_bed)
+    BamRecalib.run_recalib(bamin,bamout,filter_bed,genome_ref)
 
 
 from nnmodel import AttentionClassfication
@@ -42,5 +43,7 @@ from nnmodel import AttentionClassfication
 def trainSequenceClassification(source_path, genome, fp_ivtpath,outhistory, weightpath):
 
     AttentionClassfication.trainNN(source_path, genome, fp_ivtpath, outhistory, weightpath, epoch=100)
+
+
 
 if __name__ == '__main__': cmd()

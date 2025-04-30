@@ -2,12 +2,16 @@ from bam_manup import BamRecalib
 import cProfile
 import pstats
 
-inbam ="/mnt/ssdnas07/nanozero/rna/nanomoditune_v02/HEK293T_DR13/HEK293T_DR13/HEK293T_DR13_sorted.bam"
-outbam="/share/ueda/nanoModiTune/Hek293_filter.bam"
-filter_bed= "/share/ueda/nanoModiTune/Hek293pu_filter.bed"
+inbam ="/mnt/ssdnas07/nanozero/rna/rna_modscore_v1/Adipocyte_1/Adipocyte_1/Adipocyte_1_sorted.bam"
+# inbam="/share/ueda/nanoModiTune/Adipocyte_1_test_filter.bam"
+outbam="/share/ueda/nanoModiTune/Adipocyte_1_test_filter2.bam"
+filter_bed= "/mnt/ssdnas07/nanozero/rna/rna_modscore_v1/Adipocyte_1/Adipocyte_1/Adipocyte_1_pileup_filter.bed"
+ref = "/mnt/ssdnas07/pipeline/rna_modscore_v1/source/genome/mm10.fa"
+
 def main():
-    # vt@CoLq
-    BamRecalib.run_recalib(inbam, outbam, filter_bed)
+
+    #
+    BamRecalib.run_recalib(inbam, outbam, filter_bed,ref)
 
 main()
 
