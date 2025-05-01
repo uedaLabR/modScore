@@ -16,6 +16,18 @@ def toNumberList(data):
 
     return ret
 
+def toNumberList2(data):
+
+    ret = []
+    cnt = 0
+    label = 0
+    for columns,seq in data:
+        tokens = tokonizeN(seq)
+        ret.append((tokens, label))
+        cnt += 1
+
+    return ret
+
 def tokonizeN(seq):
 
     ret = []

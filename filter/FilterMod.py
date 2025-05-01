@@ -46,7 +46,6 @@ def filter_m5C(chrom_group,  knownPos):
         chrlist = chrom_group[chrom]
         for columns,sequence,prediction in chrlist:
 
-            chrom = columns[0]
             pos = int(columns[1])
             score = int(columns[4])
             ratio = float(columns[10])
@@ -320,7 +319,6 @@ def filter_PsudeUridine(chrom_group,  knownPos):
             chrom = columns[0]
             pos = int(columns[1])
             inknownPos = posInKnownPos(knownPos, Flg_Y, chrom, pos)
-
             predictionOK = (prediction == Flg_Y)
             if inknownPos or predictionOK:
 

@@ -1,16 +1,11 @@
 from nnmodel.NNModel import *
 from MSUtils import *
 import pysam
-def applyNNFilter(datalist,ref,checkpoint_path):
+def applyNNFilter(datalist,ref,checkpoint_path_A , checkpoint_path_C, checkpoint_path_T):
 
     fasta = pysam.FastaFile(ref)
-    model = getModel()
-    model.summary()
-    model.compile()
-    model.load_weights(checkpoint_path)
 
-    tuple_list = []
-    sequence_list = []
+    sequence_dic = {}
     for columns in datalist:
 
         chrom = columns[0]
@@ -29,38 +24,71 @@ def applyNNFilter(datalist,ref,checkpoint_path):
         if strand == "-":
             sequence = reverse_complement(sequence)
 
+        alt2key = {"a": "A", "17596": "A", "m": "C"}
+        key = alt2key.get(alt, "T")
 
-        if len(sequence) == 41:
-            tuple_list.append((sequence, 0))
-        else:
+        sequence_list = sequence_dic.get(key,[])
+        sequence_dic[key] = sequence_list
+
+        if len(sequence) != 41:
             sequence = "A"*41
-            tuple_list.append((sequence, 0))
 
         sequence_list.append((columns,sequence))
 
-    numlist = toNumberList(tuple_list)
-
-    X_test = []
-    for item in numlist:
-        if (item is not None) and (len(item[0])==39):
-            X_test.append(item[0])
-        else:
-            dummyseq = "A" * 41
-            s = encode_dna(dummyseq)
-            X_test.append(s)
-
-
-    X_test = np.array(X_test)
-    print("X_len",len(X_test))
-
-    # model = tf.keras.models.load_model(checkpoint_path)
-    predict = model.predict(X_test)
-    idx = 0
     retlist = []
-    for columns,sequence in sequence_list:
+    for key in sequence_dic:
 
-        pre = np.argmax(predict[idx])
-        retlist.append((columns,sequence,pre))
-        idx+=1
+        if key == "A":
+            checkpoint_path = checkpoint_path_A
+            numclass = 4
+        elif key == "C":
+            checkpoint_path = checkpoint_path_C
+            numclass = 3
+        else:
+            checkpoint_path = checkpoint_path_T
+            numclass = 3
+
+        model = getModel(numclass)
+        # model.summary()
+        # model.compile()
+        model.load_weights(checkpoint_path)
+
+
+        numlist = toNumberList2(sequence_list)
+
+        X_test = []
+        for item in numlist:
+            if (item is not None) and (len(item[0])==39):
+                X_test.append(item[0])
+            else:
+                dummyseq = "A" * 41
+                s = encode_dna(dummyseq)
+                X_test.append(s)
+
+
+        X_test = np.array(X_test)
+        print("X_len",len(X_test))
+
+        # model = tf.keras.models.load_model(checkpoint_path)
+        predict = model.predict(X_test)
+        idx = 0
+        for columns,sequence in sequence_list:
+
+            pre = np.argmax(predict[idx])
+            if key == "C" and pre == 2:
+                pre = 4
+            if key == "T" and pre == 2:
+                pre = 5
+
+            retlist.append((columns,sequence,pre))
+            idx+=1
 
     return retlist
+
+
+# Flg_Error = 0
+# Flg_other = 1
+# Flg_m6A = 2
+# Flg_I = 3
+# Flg_m5C = 4
+# Flg_Y = 5

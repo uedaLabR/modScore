@@ -38,9 +38,10 @@ def train(data,weightpath,epoch,outhistory):
     print(y.shape)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=42)
 
+    numclass = len(np.unique(y))
 
-    y_train = to_categorical(y_train, num_classes=6)
-    y_test = to_categorical(y_test, num_classes=6)
+    y_train = to_categorical(y_train, num_classes=numclass)
+    y_test = to_categorical(y_test, num_classes=numclass)
     X_train = np.array(X_train)
     y_train = np.array(y_train)
 
@@ -55,7 +56,7 @@ def train(data,weightpath,epoch,outhistory):
     print("X_train sample:", X_train[:5])
     print("y_train sample:", y_train[:5])
 
-    model = getModel()
+    model = getModel(numclass)
     model.summary()
 
     checkpoint = ModelCheckpoint(filepath=weightpath,
@@ -123,7 +124,7 @@ import random
 import re
 
 
-def fetch_random_sequences(fasta, sequence_length=41, number_of_sequences=5):
+def fetch_random_sequences(base,fasta, sequence_length=41, number_of_sequences=5):
 
 
     autosomes = [ref for ref in fasta.references if re.match(r'chr\d+$', ref)]
@@ -132,7 +133,7 @@ def fetch_random_sequences(fasta, sequence_length=41, number_of_sequences=5):
     chromosome_length = fasta.get_reference_length(selected_chromosome)
 
     sequences = []
-    for _ in range(number_of_sequences*10):
+    for _ in range(number_of_sequences*40):
         start = random.randint(0, chromosome_length - sequence_length)
         end = start + sequence_length
         sequence = fasta.fetch(selected_chromosome, start, end).upper()
@@ -140,9 +141,9 @@ def fetch_random_sequences(fasta, sequence_length=41, number_of_sequences=5):
             continue
         if len(sequences) ==  number_of_sequences:
             break
-        if sequence[20] == "G":
+        if sequence[20] != base:
             continue
-        # print(sequence,len(sequence))
+        print(sequence,len(sequence),sequence[20],Flg_other)
         sequences.append((sequence,Flg_other))
 
     fasta.close()
@@ -183,7 +184,7 @@ def addData(data,file,flg,nuc,maxcnt):
     for x in column_19:
         # pseq = x[1:]
         pseq = x
-        print(pseq,len(pseq),pseq[20])
+        print(pseq,len(pseq),pseq[20],flg)
         if pseq[20] == nuc:
             pseq = reverse_complement(pseq)
         # pseq = pseq[0:40]
@@ -203,19 +204,22 @@ def reverse_complement(seq):
 
 import pandas as pd
 import pysam
-def getData(data,m6Apath,m5Cpath, psudepath,editingpath, fp_ivtpath,fasta_path,fasta_path_hg38):
+def getData(base,data,m6Apath,m5Cpath, psudepath,editingpath, fp_ivtpath,fasta_path,fasta_path_hg38):
 
     maxcnt = 40000
 
     scorethres = 15
-    ratiothres = 10
+    ratiothres = 8
+
+
+
+
     sequences = []
     fasta = pysam.FastaFile(fasta_path_hg38)
 
     with open(fp_ivtpath, "r") as bed_file:
         for line in bed_file:
             columns = line.strip().split("\t")
-            alt = columns[3]
             score = int(columns[4])
             ratio = float(columns[10])
             # Check if the entry meets the filtering criteria.
@@ -223,12 +227,6 @@ def getData(data,m6Apath,m5Cpath, psudepath,editingpath, fp_ivtpath,fasta_path,f
 
                 chrom = columns[0]
                 pos = int(columns[1])
-                alt = columns[3]
-                strand = columns[5]
-                # if strand == "-":
-                #     pos = pos
-                # else:
-                #     pos = pos +1
 
                 start = pos - 20
                 end = pos + 21
@@ -236,26 +234,64 @@ def getData(data,m6Apath,m5Cpath, psudepath,editingpath, fp_ivtpath,fasta_path,f
                     break
 
                 sequence = fasta.fetch(chrom, start, end).upper()
+                ref = sequence[20]
+                alt = columns[3]
+                strand = columns[5]
+                if base == "A":
+
+                    if strand == "-":
+                        if ref != "T":
+                            continue
+                    else:
+                        if ref != "A":
+                            continue
+
+                if base == "C":
+
+                    if strand == "-":
+                        if ref != "G":
+                            continue
+                    else:
+                        if ref != "C":
+                            continue
+
+                if base == "T":
+
+                    if strand == "-":
+                        if ref != "A":
+                            continue
+                    else:
+                        if ref != "T":
+                            continue
+
+
+
                 if strand == "-":
                     sequence = reverse_complement(sequence)
 
                 #
                 # print(line)
-                print(sequence,len(sequence),strand,sequence[20],alt)
+                print(sequence,len(sequence),strand,sequence[20],alt,Flg_Error)
                 sequences.append((sequence, Flg_Error))
-
+                if len(sequences) >= 120000:
+                    break
 
     data.extend(sequences)
     print("fp data size=",len(sequences))
+
+    print("maxcnt",maxcnt)
+    if base == "A":
+        addData(data, editingpath, 3, 'T',maxcnt-1)
+        addData(data, m6Apath, Flg_m6A, 'T', maxcnt-1)
+    if base == "C":
+        addData(data, m5Cpath, 2, 'G', maxcnt-1)
+    if base == "T":
+        addData(data, psudepath, 2, 'A', maxcnt-1)
+
     fasta = pysam.FastaFile(fasta_path)
-    tuple_list3 = fetch_random_sequences(fasta, sequence_length=41, number_of_sequences=(maxcnt*3))
+    tuple_list3 = fetch_random_sequences(base,fasta, sequence_length=41, number_of_sequences=(maxcnt*3))
     data.extend(tuple_list3)
     print("randomseq=", len(tuple_list3))
-    print("maxcnt",maxcnt)
-    addData(data, editingpath, Flg_I, 'T',maxcnt-1)
-    addData(data, m6Apath, Flg_m6A, 'T', maxcnt-1)
-    addData(data, m5Cpath, Flg_m5C, 'G', maxcnt-1)
-    addData(data, psudepath, Flg_Y, 'A', maxcnt-1)
 
     #
     return data
@@ -300,10 +336,9 @@ def getFiles(sourcepath,genome):
 
     return m6Apath, m5Cpath, psudepath, editingpath
 
-def addData2(data,ref,path,flg,adjust=-1):
+def addData2(base,data,ref,path,flg,adjust=-1):
 
     posset = set()
-    print(path)
     with open(path, 'r') as f:
 
         for line in f:
@@ -312,14 +347,12 @@ def addData2(data,ref,path,flg,adjust=-1):
                 continue
 
             if "\t" not in line:
-                print(line)
                 chrom_startend = line.split("_")
                 if len(chrom_startend) > 2 or "NONE" in line:
                     continue
                 chrom,startend = chrom_startend
                 #
                 if "-" in startend:
-                    print(startend)
                     startend = startend.split("-")
                     key1 = chrom+":"+ str(int(startend[0])+adjust)
                     posset.add(key1)
@@ -355,15 +388,15 @@ def addData2(data,ref,path,flg,adjust=-1):
                 continue
 
             nuc = sequence[20]
-            print(sequence,len(sequence),nuc)
+
             strand = "+"
-            if flg == Flg_m5C:
-                if nuc == "G":
-                    strand = "-"
-            if flg == Flg_m6A or flg == Flg_I:
+            if base == "A":
                 if nuc == "T":
                     strand = "-"
-            if flg == Flg_Y:
+            if base == "C":
+                if nuc == "G":
+                    strand = "-"
+            if flg == "T":
                 if nuc == "A":
                     strand = "-"
 
@@ -373,10 +406,11 @@ def addData2(data,ref,path,flg,adjust=-1):
 
             if len(sequence) != 41:
                 continue
-            print(sequence,len(sequence),sequence[20])
+            print(sequence,len(sequence),sequence[20],flg)
             #
-            data.append((sequence, flg))
-            cnt+=1
+            if sequence[20] == base:
+                data.append((sequence, flg))
+                cnt+=1
             # if cnt > 20:
             #     break
 
@@ -403,7 +437,7 @@ def getFiles2(sourcepath,genome):
 
 import random
 from collections import defaultdict
-def sample_by_flag(data, max_per_flag=50000):
+def sample_by_flag(data, max_per_flag=100000):
 
     groups = defaultdict(list)
     for item in data:
@@ -473,7 +507,7 @@ def getRef(sourcepath, genome):
             return file
     return ""
 
-def trainNN(sourcepath, genome, fp_ivtpath, outhistory, weightpath,epoch=100):
+def trainNN(base,sourcepath, genome, fp_ivtpath, outhistory, weightpath,epoch=30):
 
     print("start training")
     ref = getRef(sourcepath, genome)
@@ -481,33 +515,56 @@ def trainNN(sourcepath, genome, fp_ivtpath, outhistory, weightpath,epoch=100):
     m6Apath, m5Cpath, psudepath, editingpath = getFiles2(sourcepath,genome)
     print((m6Apath, m5Cpath, psudepath, editingpath))
     data = []
-    if m6Apath:
-        addData2(data,ref,m6Apath,Flg_m6A)
-    if m5Cpath:
-        addData2(data,ref,m5Cpath,Flg_m5C)
-    if psudepath:
-        addData2(data,ref,psudepath,Flg_Y)
-    if editingpath:
-        addData2(data,ref,editingpath,Flg_I)
+    if base == "A":
+        if m6Apath:
+            addData2(base,data,ref,m6Apath,2)
+        if editingpath:
+            addData2(base,data, ref, editingpath, 3)
+
+        flg_labels = {
+            0: "Error",
+            1: "Other",
+            2: "m6A",
+            3: "Inosine"
+        }
+
+    if base == "C":
+
+        if m5Cpath:
+            addData2(base,data,ref,m5Cpath,2)
+
+        flg_labels = {
+            0: "Error",
+            1: "Other",
+            2: "m5C"
+        }
+
+    if base == "T" or base == "U":
+
+        if psudepath:
+            addData2(base,data,ref,psudepath,2)
+
+        flg_labels = {
+            0: "Error",
+            1: "Other",
+            2: "m5C"
+        }
+
+    print("finish get data")
+
+
     # #
     m6Apath, m5Cpath, psudepath, editingpath = getFiles(sourcepath,genome)
     print(m6Apath, m5Cpath, psudepath, editingpath)
     print("----")
-    data = getData(data,m6Apath,m5Cpath,psudepath,editingpath,fp_ivtpath,ref,refhg38)
-    print("finish get data")
+    data = getData(base,data,m6Apath,m5Cpath,psudepath,editingpath,fp_ivtpath,ref,refhg38)
+
+
 
     print("random sampling")
     data = sample_by_flag(data)
     print("end random sampling")
     #
-    flg_labels = {
-        0: "Error",
-        1: "Other",
-        2: "m6A",
-        3: "Inosine",
-        4: "m5C",
-        5: "Y"
-    }
 
 
     from collections import Counter

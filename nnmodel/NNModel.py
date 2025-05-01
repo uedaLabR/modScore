@@ -58,7 +58,7 @@ def seed_everything(seed):
     sess = tf.compat.v1.Session(graph=tf.compat.v1.get_default_graph(), config=session_conf)
     tf.compat.v1.keras.backend.set_session(sess)
 
-def getModel():
+def getModel(numclass):
 
     embed_dim = 64  # Embedding size for each token
     num_heads = 8  # Number of attention heads
@@ -76,7 +76,7 @@ def getModel():
     x = layers.Dropout(0.1)(x)
     x = layers.Dense(64, activation='relu', kernel_regularizer=L1L2(l1=0.01, l2=0.01))(x)
     x = layers.Dropout(0.1)(x)
-    outputs = layers.Dense(6, activation="softmax")(x)
+    outputs = layers.Dense(numclass, activation="softmax")(x)
     model = keras.Model(inputs=inputs, outputs=outputs)
 
     return model

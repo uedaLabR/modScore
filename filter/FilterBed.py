@@ -98,7 +98,7 @@ def getFiles2(sourcepath,genome):
 import glob
 def getFiles(source_path,genome):
 
-    repeat, ref, checkpoint_path = "","",""
+    repeat, ref, checkpoint_path_A , checkpoint_path_C, checkpoint_path_T = "","","","",""
     dirs = ["genome","repeat","model_weight"]
     for s in dirs:
 
@@ -115,9 +115,15 @@ def getFiles(source_path,genome):
                 if s == "repeat":
                     repeat = file
                 if s == "model_weight":
-                    checkpoint_path = file
 
-    return repeat, ref, checkpoint_path
+                    if "_A" in file:
+                        checkpoint_path_A = file
+                    if "_C" in file:
+                        checkpoint_path_C = file
+                    if "_T" in file:
+                        checkpoint_path_T = file
+
+    return repeat, ref, checkpoint_path_A , checkpoint_path_C, checkpoint_path_T
 
 
 from filter.NNFilter import *
@@ -130,12 +136,12 @@ def filterBed(bed, bed_out, source_path, genome):
     print("loading known pos2")
     addOtherDB(knownPos, source_path,genome)
 
-    repeat, ref, checkpoint_path = getFiles(source_path,genome)
+    repeat, ref, checkpoint_path_A , checkpoint_path_C, checkpoint_path_T = getFiles(source_path,genome)
 
     print("loading bed")
     datalist = bedToList(bed)
     print("apply sequeunce filter")
-    datalist_filter = applyNNFilter(datalist,ref,checkpoint_path)
+    datalist_filter = applyNNFilter(datalist,ref,checkpoint_path_A , checkpoint_path_C, checkpoint_path_T)
 
 
     print("filter each modification")
