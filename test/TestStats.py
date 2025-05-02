@@ -439,13 +439,12 @@ def run6(vcf1,alu_dict):
     print("BED2:", alucnt1,len(poss2))
 
 
-
 #
 vcf1 = "/share/ueda/nanoModiTune/Hek293pu_filter.bed"
-run1_1(vcf1)
-run1(vcf1)
+# run1_1(vcf1)
+# run1(vcf1)
 run2(vcf1)
-run3(vcf1)
-run4(vcf1)
-run5(vcf1)
-run6(vcf1,alu_dict)
+# run3(vcf1)
+# run4(vcf1)
+# run5(vcf1)
+# run6(vcf1,alu_dict)

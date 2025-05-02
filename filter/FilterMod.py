@@ -60,7 +60,10 @@ def filter_m5C(chrom_group,  knownPos):
                 columns.append("flgOK")
                 columns.append("Pass")
             else:
-                columns.append(strFlg(prediction))
+                if flgOK:
+                    columns.append(strFlg(prediction)+",low thres")
+                else:
+                    columns.append(strFlg(prediction))
                 columns.append("Fail")
 
             retlist.append(columns)
@@ -288,8 +291,10 @@ def filter_Inosine(chrom_group, repeat,genome,knownPos,source_path):
                 columns.append("Pass")
 
             else:
-                columns.append(strFlg(prediction))
-                columns.append("Fail")
+                if flgOk:
+                    columns.append(strFlg(prediction)+",non near sites")
+                else:
+                    columns.append(strFlg(prediction))
 
             retlist.append(columns)
 

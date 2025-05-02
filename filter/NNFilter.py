@@ -57,7 +57,7 @@ def applyNNFilter(datalist,ref,checkpoint_path_A , checkpoint_path_C, checkpoint
         # print("checkpoint_path", checkpoint_path_T)
         model.load_weights(checkpoint_path)
 
-
+        sequence_list = sequence_dic.get(key, [])
         numlist = toNumberList2(sequence_list)
 
         X_test = []

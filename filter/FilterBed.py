@@ -142,9 +142,10 @@ def filterBed(bed, bed_out, source_path, genome):
 
     print("loading bed")
     datalist = bedToList(bed)
+    print("len datalist " , len(datalist))
     print("apply sequeunce filter")
     datalist_filter = applyNNFilter(datalist,ref,checkpoint_path_A , checkpoint_path_C, checkpoint_path_T)
-
+    print("len datalist_filter " , len(datalist_filter))
 
     print("filter each modification")
     filterList = filterEachMod(datalist_filter,knownPos,source_path,repeat,genome)
