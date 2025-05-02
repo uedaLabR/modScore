@@ -9,6 +9,7 @@ if __name__ == "__main__":
     bed = "/share/ueda/nanoModiTune/Hek293pu.bed"
     bed_out = "/share/ueda/nanoModiTune/Hek293pu_filter.bed"
     source_path = "/share/ueda/nanoModiTune/resource"
+
     # # bed = "/share/ueda/nanoModiTune/Hek293_recalib_pu.bed"
     # # bed_out = "/share/ueda/nanoModiTune/Hek293_recalib_pu_filter.bed"
     # ref = "/mnt/ssdnas07/pipeline/rna_v08/source/hg38.fa"

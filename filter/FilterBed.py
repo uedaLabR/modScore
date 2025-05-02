@@ -69,6 +69,7 @@ def bedToList(bed):
                 data.append(columns)
                 if len(data) %10000 == 0:
                     print("load",len(data),"out of ",cnt,"scorethres",depth_thres,"ratiothres",ratio_thres)
+
             cnt+=1
 
     return data
@@ -129,14 +130,15 @@ def getFiles(source_path,genome):
 from filter.NNFilter import *
 def filterBed(bed, bed_out, source_path, genome):
 
-    print("start filterbe")
+    print("start filter bed")
+
+    repeat, ref, checkpoint_path_A, checkpoint_path_C, checkpoint_path_T = getFiles(source_path, genome)
+    print(repeat, ref, checkpoint_path_A, checkpoint_path_C, checkpoint_path_T)
 
     print("loading known pos")
     knownPos = loadKnownPos(source_path, genome)
     print("loading known pos2")
     addOtherDB(knownPos, source_path,genome)
-
-    repeat, ref, checkpoint_path_A , checkpoint_path_C, checkpoint_path_T = getFiles(source_path,genome)
 
     print("loading bed")
     datalist = bedToList(bed)

@@ -207,12 +207,8 @@ import pysam
 def getData(base,data,m6Apath,m5Cpath, psudepath,editingpath, fp_ivtpath,fasta_path,fasta_path_hg38):
 
     maxcnt = 40000
-
     scorethres = 15
     ratiothres = 8
-
-
-
 
     sequences = []
     fasta = pysam.FastaFile(fasta_path_hg38)
