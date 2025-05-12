@@ -4,7 +4,9 @@ def stats_result(bed_file, output_file):
 
     stats = {}
     with open(bed_file, "r") as bed:
+        print(bed_file)
         for line in bed:
+            print(line)
             columns = line.strip().split("\t")
             alt = columns[3]
             passfail = columns[-1]
@@ -31,8 +33,10 @@ def stats_result(bed_file, output_file):
                 flg_counts = alt_data[f'{status}_flg']
                 if flg_counts:
                     for flg, flg_count in flg_counts.items():
+                        print(f"{alt}\t{status}\t{count}\t{flg}\t{flg_count}\n")
                         out.write(f"{alt}\t{status}\t{count}\t{flg}\t{flg_count}\n")
                 else:
+                    print(f"{alt}\t{status}\t{count}\t-\t0\n")
                     out.write(f"{alt}\t{status}\t{count}\t-\t0\n")
 
 

@@ -295,6 +295,7 @@ def filter_Inosine(chrom_group, repeat,genome,knownPos,source_path):
                     columns.append(strFlg(prediction)+",non near sites")
                 else:
                     columns.append(strFlg(prediction))
+                columns.append("Fail")
 
             retlist.append(columns)
 
