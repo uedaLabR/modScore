@@ -23,15 +23,19 @@ def filterEachMod(datalist_filter,knownPos,source_path,repeat,genome):
 
         if alt == "m":
             # Process alt "m" using filter_m5C for all chromosomes.
+            print("filter m5C")
             result = filter_m5C(chrom_group,  knownPos)
         elif alt == "a":
             # Process alt "a" using filter_m6A.
+            print("filter m6A")
             result = filter_m6A(chrom_group,  knownPos)
         elif alt == "17596":
             # Process alt "17596" using filter_Inosine.
+            print("filter Inosine")
             result = filter_Inosine(chrom_group, repeat,genome,knownPos,source_path)
         else:
             # Process any other alt using filter_PsudeUridine.
+            print("filter Pusde Uridine")
             result = filter_PsudeUridine(chrom_group, knownPos)
         # Merge the filtered results into one list.
         if result is not None:
@@ -149,17 +153,21 @@ def filterBed(bed, bed_out, source_path, genome):
 
     print("filter each modification")
     filterList = filterEachMod(datalist_filter,knownPos,source_path,repeat,genome)
+    print("output to files")
     output(bed_out, filterList)
 
 def output(bed_out, filterList):
 
     with open(bed_out, "w") as out_file:
+
+        n = 0
         for columns in filterList:
 
             line = "\t".join(columns)
             if not line.endswith("\n"):
                 line += "\n"
             out_file.write(line)
-
+            n+=1
+        print("wrote",n," lines")
 
 
