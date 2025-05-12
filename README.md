@@ -31,7 +31,7 @@ cd modScore
 Download source files:
 
 ```
-wget https://zenodo.org/api/records/15239594/draft/files/source.zip/content .
+wget https://zenodo.org/records/15369045/files/source.zip/content .
 unzip source.zip
 ```
 
