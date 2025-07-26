@@ -88,7 +88,7 @@ def applyNNFilter(datalist,ref,checkpoint_path_A , checkpoint_path_C, checkpoint
             chroms.add(columns[0])
             idx+=1
 
-    return retlist,chroms
+    return retlist
 
 
 # Flg_Error = 0
