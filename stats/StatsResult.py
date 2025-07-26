@@ -3,15 +3,21 @@
 def stats_result(bed_file, output_file):
 
     stats = {}
+    chroms = set()
     with open(bed_file, "r") as bed:
         print(bed_file)
         for line in bed:
-            print(line)
+
             columns = line.strip().split("\t")
+            chr = columns[0]
+
             alt = columns[3]
             passfail = columns[-1]
             flg = columns[-2]
 
+
+            if chr == "chrX":
+                print(line)
             #
             if alt not in stats:
                 stats[alt] = {'Pass': 0, 'Fail': 0, 'Pass_flg': {}, 'Fail_flg': {}}
@@ -24,6 +30,8 @@ def stats_result(bed_file, output_file):
             if flg not in flg_dict:
                 flg_dict[flg] = 0
             flg_dict[flg] += 1
+
+    print(chroms)
 
     with open(output_file, "w") as out:
         out.write("alt\tStatus\tCount\tFlg\tFlg_Count\n")

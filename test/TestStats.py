@@ -159,7 +159,7 @@ def filterDRACH(poss2,ref,adjust=0):
 def run1_1(vcf1):
 
     ref = "/mnt/ssdnas07/pipeline/rna_v08/source/hg38.fa"
-    vcf1 = "/share/ueda/nanoModiTune/Hek293pu_filter.bed"
+    # vcf1 = "/share/ueda/nanoModiTune/Hek293pu_filter.bed"
     poss = loadBed(vcf1, "a")
     poss = filterDRACH(poss,ref)
 
@@ -441,10 +441,19 @@ def run6(vcf1,alu_dict):
 
 #
 vcf1 = "/share/ueda/nanoModiTune/Hek293pu_filter.bed"
-# run1_1(vcf1)
-# run1(vcf1)
-run2(vcf1)
-# run3(vcf1)
-# run4(vcf1)
-# run5(vcf1)
-# run6(vcf1,alu_dict)
+run1(vcf1)
+
+vcf1 = "/share/ueda/nanoModiTune/Hek293pu.bed"
+run1(vcf1)
+
+vcf1 = "/share/ueda/nanoModiTune/Hek293pu_filter.bed"
+run1_1(vcf1)
+
+vcf1_1 = "/share/ueda/nanoModiTune/Hek293pu.bed"
+run1_1(vcf1)
+
+# run2(vcf1)
+# # run3(vcf1)
+# # run4(vcf1)
+# # run5(vcf1)
+# # run6(vcf1,alu_dict)

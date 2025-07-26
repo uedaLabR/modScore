@@ -4,7 +4,7 @@ import pysam
 def applyNNFilter(datalist,ref,checkpoint_path_A , checkpoint_path_C, checkpoint_path_T):
 
     fasta = pysam.FastaFile(ref)
-
+    chroms = set()
     sequence_dic = {}
     for columns in datalist:
 
@@ -17,8 +17,8 @@ def applyNNFilter(datalist,ref,checkpoint_path_A , checkpoint_path_C, checkpoint
 
         start = pos - 20
         end = pos + 21
-        if "M" in chrom:
-            break
+        if "random" in chrom or "alt" in chrom or  "M" in chrom:
+            continue
 
         sequence = fasta.fetch(chrom, start, end).upper()
         if strand == "-":
@@ -85,9 +85,10 @@ def applyNNFilter(datalist,ref,checkpoint_path_A , checkpoint_path_C, checkpoint
                 pre = 5
 
             retlist.append((columns,sequence,pre))
+            chroms.add(columns[0])
             idx+=1
 
-    return retlist
+    return retlist,chroms
 
 
 # Flg_Error = 0

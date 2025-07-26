@@ -48,11 +48,13 @@ from Configs import *
 def bedToList(bed):
 
     data = []
+    chroms = set()
     cnt=0
     with open(bed, "r") as bed_file:
         for line in bed_file:
 
             columns = line.strip().split("\t")
+            chrom = columns[0]
             alt = columns[3]
             score = int(columns[4])
             ratio = float(columns[10])
@@ -73,10 +75,10 @@ def bedToList(bed):
                 data.append(columns)
                 if len(data) %10000 == 0:
                     print("load",len(data),"out of ",cnt,"scorethres",depth_thres,"ratiothres",ratio_thres)
-
+                    chroms.add(chrom)
             cnt+=1
 
-    return data
+    return data,chroms
 
 
 def getFiles2(sourcepath,genome):
@@ -145,11 +147,14 @@ def filterBed(bed, bed_out, source_path, genome):
     addOtherDB(knownPos, source_path,genome)
 
     print("loading bed")
-    datalist = bedToList(bed)
+    datalist,chroms = bedToList(bed)
     print("len datalist " , len(datalist))
+    print(chroms)
     print("apply sequeunce filter")
     datalist_filter = applyNNFilter(datalist,ref,checkpoint_path_A , checkpoint_path_C, checkpoint_path_T)
     print("len datalist_filter " , len(datalist_filter))
+
+    print(chroms)
 
     print("filter each modification")
     filterList = filterEachMod(datalist_filter,knownPos,source_path,repeat,genome)
