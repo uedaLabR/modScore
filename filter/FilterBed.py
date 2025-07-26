@@ -154,7 +154,6 @@ def filterBed(bed, bed_out, source_path, genome):
     datalist_filter = applyNNFilter(datalist,ref,checkpoint_path_A , checkpoint_path_C, checkpoint_path_T)
     print("len datalist_filter " , len(datalist_filter))
 
-    print(chroms)
 
     print("filter each modification")
     filterList = filterEachMod(datalist_filter,knownPos,source_path,repeat,genome)
