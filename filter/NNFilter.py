@@ -20,9 +20,12 @@ def applyNNFilter(datalist,ref,checkpoint_path_A , checkpoint_path_C, checkpoint
             continue
 
         try:
+
             sequence = fasta.fetch(chrom, start, end).upper()
+
         except ValueError as e:
-                print(f"[Warning] Failed to fetch {chrom}:{start}-{end} ({e})")
+
+            print(f"[Warning] Failed to fetch {chrom}:{start}-{end} ({e})")
             sequence = "A"*41
 
         if strand == "-":
