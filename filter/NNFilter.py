@@ -9,18 +9,22 @@ def applyNNFilter(datalist,ref,checkpoint_path_A , checkpoint_path_C, checkpoint
     for columns in datalist:
 
         chrom = columns[0]
-        pos = int(columns[1])
         strand = columns[5]
         pos = int(columns[1])
         alt = columns[3]
-        strand = columns[5]
+
 
         start = pos - 20
         end = pos + 21
         if "random" in chrom or "alt" in chrom or  "M" in chrom:
             continue
 
-        sequence = fasta.fetch(chrom, start, end).upper()
+        try:
+            sequence = fasta.fetch(chrom, start, end).upper()
+        except ValueError as e:
+                print(f"[Warning] Failed to fetch {chrom}:{start}-{end} ({e})")
+            sequence = "A"*41
+
         if strand == "-":
             sequence = reverse_complement(sequence)
 
@@ -31,7 +35,8 @@ def applyNNFilter(datalist,ref,checkpoint_path_A , checkpoint_path_C, checkpoint
         sequence_dic[key] = sequence_list
 
         if len(sequence) != 41:
-            sequence = "A"*41
+            dummyseq = "A" * 41
+            sequence = dummyseq
 
         sequence_list.append((columns,sequence))
 
